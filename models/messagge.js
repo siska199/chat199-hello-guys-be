@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         defaultValue: DataTypes.UUIDV4,
         validate: {
-          notNull,
+          notNull:true,
         },
       },
       idReceiver: DataTypes.UUID,

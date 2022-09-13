@@ -9,14 +9,15 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      group_message.hasMany(models.message, {
+      group_message.hasMany(models.messagge, {
         as: "messages",
         foreignKey: "idGroup",
-      }),
-        group_message.hasMany(models.group_member, {
-          as: "members",
-          foreignKey: "idGroup",
-        });
+      });
+
+      group_message.hasMany(models.group_member, {
+        as: "members",
+        foreignKey: "idGroup",
+      });
     }
   }
   group_message.init(
@@ -27,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         defaultValue: DataTypes.UUIDV4,
         validate: {
-          notNull,
+          notNull: true,
         },
       },
       name: DataTypes.STRING,

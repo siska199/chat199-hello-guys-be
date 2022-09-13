@@ -19,9 +19,10 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         defaultValue: DataTypes.UUIDV4,
         validate: {
-          notNull,
+          notNull: true,
         },
       },
+      password: DataTypes.STRING,
       fullname: DataTypes.STRING,
       username: DataTypes.STRING,
       image: DataTypes.STRING,
