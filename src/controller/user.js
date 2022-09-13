@@ -15,7 +15,7 @@ exports.register = async (req, res) => {
     };
     const resValidation = validatesData(form);
     if (resValidation !== true)
-      return res.status(404).json({
+      return res.status(400).json({
         message: resValidation,
       });
     const usernameHaveUsed = await user.findOne({
@@ -24,7 +24,7 @@ exports.register = async (req, res) => {
       },
     });
     if (usernameHaveUsed)
-      return res.status(404).json({
+      return res.status(400).json({
         message: "This username have been use by other user",
       });
 
@@ -57,12 +57,12 @@ exports.login = async (req, res) => {
       },
     });
     if (!findUser)
-      return res.status(404).json({
+      return res.status(400).json({
         message: "Username and password doesn't match",
       });
     const checkPassword = await comparePassword(password, findUser.password);
     if (!checkPassword)
-      return res.status(404).json({
+      return res.status(400).json({
         message: "Username and password doesn't match",
       });
     findUser = findUser.get({ plain: true });
@@ -119,7 +119,7 @@ exports.updateUser = async (req, res) => {
         message: "This user doesn't exist",
       });
 
-    return res.status(201).json({
+    return res.status(200).json({
       message: "Update profile success",
     });
   } catch (error) {
