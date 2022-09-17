@@ -19,6 +19,7 @@
     "mysql2": "^2.3.3",
     "sequelize": "^6.21.4",
     "sequelize-cli": "^6.4.1",
-    "socket.io": "^4.5.2"
+    "socket.io": "^4.5.2",
+    "uuidv4": "^6.2.13"
   }
 }

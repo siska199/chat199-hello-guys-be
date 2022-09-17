@@ -22,9 +22,15 @@ module.exports = {
       },
       image: {
         type: Sequelize.STRING,
+        defaultValue:
+          "https://i.pinimg.com/736x/9d/da/c9/9ddac96253bd63130740a249630d5cdc.jpg",
       },
       info: {
         type: Sequelize.STRING,
+      },
+      status: {
+        type: Sequelize.STRING,
+        defaultValue: "online",
       },
       createdAt: {
         allowNull: false,

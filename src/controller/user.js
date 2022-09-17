@@ -1,4 +1,5 @@
-const { user } = require("../../models");
+const { Op } = require("sequelize");
+const { user, messagge } = require("../../models");
 const {
   validatesData,
   encryptPassword,
@@ -28,17 +29,22 @@ exports.register = async (req, res) => {
         message: "This username have been use by other user",
       });
 
-    let createUser = await user.create({
+    const createUser = await user.create({
       ...form,
       password: await encryptPassword(form.password),
     });
-    createUser = createUser.get({ plain: true });
-    delete createUser.password;
+    let dataUser = await user.findOne({
+      where: {
+        id: createUser.id,
+      },
+    });
+    dataUser = dataUser.get({ plain: true });
+    delete dataUser.password;
     return res.status(201).json({
       message: "Register user success",
       data: {
-        ...createUser,
-        token: generateToken(createUser.id),
+        ...dataUser,
+        token: generateToken(dataUser.id),
       },
     });
   } catch (error) {
@@ -65,12 +71,20 @@ exports.login = async (req, res) => {
       return res.status(400).json({
         message: "Username and password doesn't match",
       });
+    await user.update(
+      { status: "online" },
+      {
+        where: { id: findUser.id },
+      }
+    );
+
     findUser = findUser.get({ plain: true });
     delete findUser.password;
     return res.status(200).json({
       message: "Login success",
       data: {
         ...findUser,
+        status: "online",
         token: generateToken(findUser.id),
       },
     });
@@ -78,6 +92,30 @@ exports.login = async (req, res) => {
     res.status(500).json({
       message: error.message,
     });
+  }
+};
+
+exports.logout = async (req, res) => {
+  try {
+    const { id } = req.user;
+    const findUser = await user.findOne({
+      where: { id },
+    });
+    if (!findUser)
+      return res.status(403).json({ message: "This user have been removed" });
+    await user.update(
+      { status: "offline" },
+      {
+        where: {
+          id,
+        },
+      }
+    );
+    res.status(200).json({
+      message: "Logout user success",
+    });
+  } catch (error) {
+    res.status(500).json(error.message);
   }
 };
 
@@ -98,7 +136,7 @@ exports.getUser = async (req, res) => {
     return res.status(200).json({
       message: "Get user data success",
       data: {
-        ...findUser.get({ plain: true }),
+        ...findUser,
       },
     });
   } catch (error) {
@@ -126,5 +164,44 @@ exports.updateUser = async (req, res) => {
     res.status(500).json({
       message: error.message,
     });
+  }
+};
+
+//-------Get contacts user except the user itself----------////
+
+exports.getContacts = async (idUser) => {
+  try {
+    const contacts = await user.findAll({
+      where: {
+        id: {
+          [Op.not]: idUser,
+        },
+      },
+      include: [
+        {
+          model: messagge,
+          as: "messagesAsReceiver",
+          where: {
+            idSender: idUser,
+          },
+          required: false,
+        },
+        {
+          model: messagge,
+          as: "messagesAsSender",
+          where: {
+            idReceiver: idUser,
+          },
+          required: false,
+        },
+      ],
+      attributes: {
+        exclude: ["password"],
+      },
+    });
+
+    return contacts;
+  } catch (error) {
+    throw new Error(error);
   }
 };

@@ -9,6 +9,21 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      user.hasMany(models.messagge,{ //Kita ambil seluruh messages dimana uswr sebagai receiver
+        as : "messagesAsReceiver",
+        foreignKey :{
+          name : "idReceiver"
+        }
+      })
+      user.hasMany(models.messagge,{ //kita ambil seluruh messages dimana uset sebagai sender
+        as : "messagesAsSender",
+        foreignKey : {
+          name : "idSender"
+        }
+      })
+
+
+
     }
   }
   user.init(
@@ -27,6 +42,7 @@ module.exports = (sequelize, DataTypes) => {
       username: DataTypes.STRING,
       image: DataTypes.STRING,
       info: DataTypes.STRING,
+      status: DataTypes.STRING,
     },
     {
       sequelize,

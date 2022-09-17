@@ -8,15 +8,17 @@ const router = require("./src/routes");
 const app = express();
 
 const server = http.createServer(app);
-const io = new Server({
+const io = new Server(server, {
   cors: {
     origin: process.env.BASE_URL_FE,
   },
 });
+
 require("./src/socket")(io);
 
 const PORT = process.env.PORT;
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.use("/api199/v1", router);
 

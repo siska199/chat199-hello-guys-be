@@ -12,8 +12,7 @@ const validateData = (type, data) => {
       break;
     case "fullname":
       pattern = "^([a-z]+[ ]{0,1})+$";
-      err =
-        "Fullname should't contain uppercase letter and should only contain alphabet";
+      err = "Fullame should only contain alphaphet";
       break;
     case "password":
       pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,20})";
@@ -45,8 +44,6 @@ const encryptPassword = async (password) => {
 };
 
 const comparePassword = async (password, hashedPassword) => {
-  console.log("password: ", password);
-  console.log("hashed password: ", hashedPassword);
   const res = bcrypt.compare(password, hashedPassword);
 
   return res;
