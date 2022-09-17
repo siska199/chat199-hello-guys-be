@@ -1,9 +1,10 @@
 const { messagge } = require("../../models");
 const { Op } = require("sequelize");
+const sequelize  = require("sequelize")
 
 exports.addMessage = async (data) => {
   try {
-    const addMsg = await messagge.create(data);
+    await messagge.create(data);
   } catch (error) {
     throw new Error(error);
   }
@@ -11,7 +12,14 @@ exports.addMessage = async (data) => {
 
 exports.getMessages = async (idReceiver, idSender) => {
   try {
-    console.log(idReceiver, idSender)
+    const groupMessages = await messagge.findAll({
+      // attributes : [
+      // // "idSender","idReceiver"
+      // ],
+      group: ["idSender"],
+      raw: true,
+    });
+    console.log("group messages: ", groupMessages);
     const messages = await messagge.findAll({
       where: {
         idSender: {
@@ -21,10 +29,11 @@ exports.getMessages = async (idReceiver, idSender) => {
           [Op.or]: [idReceiver, idSender],
         },
       },
-      raw:true,
+      raw: true,
       order: [["createdAt"]],
+      group: ["messagge.createdAt"],
     });
-    console.log("query language; ", messages)
+
     return messages;
   } catch (error) {
     throw new Error(error);

@@ -5,7 +5,7 @@
     "database": "chat199-hello-guys",
     "host": "localhost",
     "dialect": "mysql",
-    "logging" : false
+    "logging" : true
   },
   "test": {
     "username": "root",
