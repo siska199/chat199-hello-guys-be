@@ -54,9 +54,29 @@ const generateToken = (id) => {
   const token = jwt.sign({ id }, secret);
   return token;
 };
+const getLatestMessage = (messageAsReceiver, messageAsSender) => {
+  let lastMessage = "";
+  const dateReceiver = messageAsReceiver ? messageAsReceiver.createdAt : null;
+  const dateSender = messageAsSender ? messageAsSender.createdAt : null;
+  if (!dateReceiver) {
+    lastMessage = messageAsReceiver;
+  } else if (!dateSender) {
+    lastMessage = messageAsReceiver;
+  } else {
+    const dateReceiverConvert = new Date(dateReceiver);
+    const dateSenderConvert = new Date(dateSender);
+    lastMessage =
+      dateReceiverConvert > dateSenderConvert
+        ? messageAsReceiver
+        : messageAsSender;
+  }
+  return lastMessage;
+};
+
 module.exports = {
   validatesData,
   encryptPassword,
   comparePassword,
   generateToken,
+  getLatestMessage,
 };

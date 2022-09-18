@@ -1,10 +1,12 @@
 const { Op } = require("sequelize");
 const { user, messagge } = require("../../models");
+const { getMessagesOffline } = require("./message");
 const {
   validatesData,
   encryptPassword,
   generateToken,
   comparePassword,
+  getLatestMessage,
 } = require("../utils/helper");
 
 exports.register = async (req, res) => {
@@ -171,7 +173,7 @@ exports.updateUser = async (req, res) => {
 
 exports.getContacts = async (idUser) => {
   try {
-    const contacts = await user.findAll({
+    let contacts = await user.findAll({
       where: {
         id: {
           [Op.not]: idUser,
@@ -185,6 +187,7 @@ exports.getContacts = async (idUser) => {
             idSender: idUser,
           },
           required: false,
+          order: ["createdAt"],
         },
         {
           model: messagge,
@@ -195,10 +198,34 @@ exports.getContacts = async (idUser) => {
           required: false,
         },
       ],
+      order: [
+        [{ model: messagge, as: "messagesAsReceiver" }, "createdAt", "DESC"],
+        [{ model: messagge, as: "messagesAsSender" }, "createdAt", "DESC"],
+      ],
       attributes: {
         exclude: ["password"],
       },
     });
+    if (contacts.length > 0)
+      contacts = await Promise.all(
+        JSON.parse(JSON.stringify(contacts)).map(async (data) => {
+          const lastMessage = getLatestMessage(
+            data.messagesAsReceiver[0],
+            data.messagesAsSender[0]
+          );
+          const countNotif = await getMessagesOffline(idUser, data.id);
+          return {
+            id: data.id,
+            fullname: data.fullname,
+            username: data.username,
+            image: data.image,
+            info: data.info,
+            status: data.status,
+            lastMessage,
+            notif: countNotif,
+          };
+        })
+      );
 
     return contacts;
   } catch (error) {

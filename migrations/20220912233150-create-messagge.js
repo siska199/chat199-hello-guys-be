@@ -38,6 +38,13 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
+      read: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
+      day: {
+        type: Sequelize.STRING,
+      },
       text: {
         type: Sequelize.STRING,
       },

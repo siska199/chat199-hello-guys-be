@@ -40,11 +40,10 @@ const socketIo = (io) => {
 
     socket.on(EVENTS.SEND_MESSAGE, async (form) => {
       await addMessage(form);
-
-      //bisa digunakan untuk membuat notification
       socket.emit(EVENTS.NEW_MESSAGE, form.idReceiver);
-      // .to(socket.id)
-      // .to(connectedUser[form.idReceiver])
+      io.to(socket.id)
+      .to(connectedUser[form.idReceiver]).emit(EVENTS.LOAD_CONTACTS,form.idUser)
+
     });
 
     socket.on(EVENTS.LOAD_MESSAGES, async (idReceiver) => {
@@ -56,6 +55,10 @@ const socketIo = (io) => {
       io.to(socket.id)
         .to(connectedUser[idReceiver])
         .emit(EVENTS.MESSAGES, dataMessages);
+
+      io.to(socket.id)
+        .to(connectedUser[idReceiver])
+        .emit("RELOAD_CONTACTS")
     });
 
     socket.on("disconnect", () => {
