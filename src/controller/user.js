@@ -169,6 +169,19 @@ exports.updateUser = async (req, res) => {
   }
 };
 
+//---------------GetContactActiveData--------------//
+exports.getContact = async (idContact) => {
+  try {
+    let findUser = await user.findOne({
+      where: {
+        id: idContact,
+      },
+    });
+    return findUser;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
 //-------Get contacts user except the user itself----------////
 
 exports.getContacts = async (idUser) => {
@@ -221,7 +234,7 @@ exports.getContacts = async (idUser) => {
             image: data.image,
             info: data.info,
             status: data.status,
-            lastMessage,
+            lastMessage: lastMessage,
             notif: countNotif,
           };
         })

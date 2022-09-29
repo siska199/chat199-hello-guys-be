@@ -55,11 +55,12 @@ const generateToken = (id) => {
   return token;
 };
 const getLatestMessage = (messageAsReceiver, messageAsSender) => {
+
   let lastMessage = "";
   const dateReceiver = messageAsReceiver ? messageAsReceiver.createdAt : null;
   const dateSender = messageAsSender ? messageAsSender.createdAt : null;
   if (!dateReceiver) {
-    lastMessage = messageAsReceiver;
+    lastMessage = messageAsSender;
   } else if (!dateSender) {
     lastMessage = messageAsReceiver;
   } else {
