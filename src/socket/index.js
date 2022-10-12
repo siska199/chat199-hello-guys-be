@@ -50,7 +50,7 @@ const socketIo = (io) => {
       socket.emit(EVENTS.ACTIVE_CONTACT, activeContactData);
     });
 
-    socket.on(EVENTS.LOAD_MESSAGES, async (idReceiver) => {
+    socket.on(EVENTS.LOAD_MESSAGES, async ({ idReceiver, loadContacts }) => {
       //Tambah logic detect active contact////
       const token = socket.handshake?.auth?.token;
       const idSender = getIdSender(token);
@@ -60,7 +60,7 @@ const socketIo = (io) => {
         .to(connectedUser[idReceiver])
         .emit(EVENTS.MESSAGES, dataMessages);
 
-      io.to(socket.id)
+      loadContacts && io.to(socket.id)
         .to(connectedUser[idReceiver])
         .emit(EVENTS.RELOAD_CONTACTS);
     });
