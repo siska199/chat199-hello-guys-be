@@ -40,8 +40,9 @@ const socketIo = (io) => {
       socket.broadcast.emit(EVENTS.RELOAD_CONTACTS);
     });
 
-    socket.on(EVENTS.LOAD_CONTACTS, async (idUser) => {
-      const contacts = await getContacts(idUser);
+    socket.on(EVENTS.LOAD_CONTACTS, async (form) => {
+      const { idUser, query } = form;
+      const contacts = await getContacts(idUser, query.toLowerCase());
       socket.emit(EVENTS.CONTACTS, contacts);
     });
 
@@ -60,9 +61,11 @@ const socketIo = (io) => {
         .to(connectedUser[idReceiver])
         .emit(EVENTS.MESSAGES, dataMessages);
 
-      loadContacts && io.to(socket.id)
-        .to(connectedUser[idReceiver])
-        .emit(EVENTS.RELOAD_CONTACTS);
+      loadContacts &&
+        io
+          .to(socket.id)
+          .to(connectedUser[idReceiver])
+          .emit(EVENTS.RELOAD_CONTACTS);
     });
 
     socket.on(EVENTS.SEND_MESSAGE, async (form) => {

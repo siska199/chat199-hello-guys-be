@@ -184,12 +184,15 @@ exports.getContact = async (idContact) => {
 };
 //-------Get contacts user except the user itself----------////
 
-exports.getContacts = async (idUser) => {
+exports.getContacts = async (idUser, query) => {
   try {
     let contacts = await user.findAll({
       where: {
         id: {
           [Op.not]: idUser,
+        },
+        username: {
+          [Op.substring]: query,
         },
       },
       include: [
